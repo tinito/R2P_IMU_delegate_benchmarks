@@ -23,6 +23,9 @@
 #include "shell.h"
 #include "chprintf.h"
 
+#include "delegate/direct/Direct.hpp"
+#include "delegate/virtual/Virtual.hpp"
+
 #define WA_SIZE_256B      THD_WA_SIZE(256)
 #define WA_SIZE_512B      THD_WA_SIZE(512)
 #define WA_SIZE_1K        THD_WA_SIZE(1024)
@@ -119,9 +122,46 @@ static void cmd_id(BaseSequentialStream *chp, int argc, char *argv[]) {
 	chprintf(chp, "UID: %d\r\n", stm32_id8());
 }
 
+static void cmd_direct(BaseSequentialStream *chp, int argc, char *argv[]) {
+	Direct test;
+	systime_t start_time;
+	int a = 0;
+	int i = 0;
+
+	(void) argc;
+	(void) argv;
+
+	start_time = chTimeNow();
+
+	for (i = 0; i < 1000000; i++) {
+		a = test.f(a, i);
+	}
+
+	chprintf(chp, "Direct: %d, %d\r\n", a, chTimeNow() - start_time);
+}
+
+static void cmd_virtual(BaseSequentialStream *chp, int argc, char *argv[]) {
+	Virtual v;
+	BaseVirtual * test = dynamic_cast<BaseVirtual *>(&v);
+	systime_t start_time;
+	int a = 0;
+	int i = 0;
+
+	(void) argc;
+	(void) argv;
+
+	start_time = chTimeNow();
+
+	for (i = 0; i < 1000000; i++) {
+		a = test->f(a, i);
+	}
+
+	chprintf(chp, "Virtual: %d, %d\r\n", a, chTimeNow() - start_time);
+}
+
 static const ShellCommand commands[] = { { "mem", cmd_mem }, { "threads",
 		cmd_threads }, { "reset", cmd_reset }, { "id",
-		cmd_id }, { NULL, NULL } };
+		cmd_id }, { "direct", cmd_direct}, { "virtual", cmd_virtual}, { NULL, NULL } };
 
 static const ShellConfig shell_cfg1 = { (BaseSequentialStream *) &SERIAL_DRIVER,
 		commands };

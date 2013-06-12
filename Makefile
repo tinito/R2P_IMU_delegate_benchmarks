@@ -86,7 +86,9 @@ CSRC = $(PORTSRC) \
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CPPSRC = $(CHIBIOS)/os/various/ch.cpp
+CPPSRC = $(CHIBIOS)/os/various/ch.cpp \
+         ./delegate/direct/Direct.cpp \
+         ./delegate/virtual/Virtual.cpp
 
 ifeq ($(TEST),)
   CPPSRC += main.cpp

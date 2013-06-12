@@ -1,12 +1,10 @@
 #ifndef __VIRTUAL_HPP__
 #define __VIRTUAL_HPP__
 
-#include <iostream>
-
 class BaseVirtual
 {
 public:
-    virtual int f(int a, int b) = 0;
+    virtual int f(int a, int b) {return 0;};
 };
 
 class Virtual : public BaseVirtual
